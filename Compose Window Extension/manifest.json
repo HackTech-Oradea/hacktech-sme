@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Gmail Compose Interceptor",
+  "version": "1.0",
+  "description": "Intercepts Gmail compose data and displays it in a popup",
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}
