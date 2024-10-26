@@ -22,11 +22,12 @@
 }
 
 .scroll-content {
-  max-height: 300px;
-  overflow-y: auto;
+  max-height: 30px;
+  overflow-y: scroll;
   border: 1px solid #ccc;
   padding: 10px;
   margin: 10px 0;
+  height: 30px;
 }
 
 .button-container {

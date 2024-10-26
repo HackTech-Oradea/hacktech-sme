@@ -30,10 +30,11 @@ function createPopup() {
   emailBodyTextarea.value = 'bodyContent';
   
   // Adjust textarea height to fit content
-  emailBodyTextarea.style.overflow = 'hidden';
+  emailBodyTextarea.style.overflowY = 'scroll';
   emailBodyTextarea.style.resize = 'none';
   emailBodyTextarea.style.height = 'auto';
-  emailBodyTextarea.style.height = emailBodyTextarea.scrollHeight + 'px';
+  emailBodyTextarea.style.height = '35px';
+  emailBodyTextarea.style.minHeight = '35px';
 
   // Add event listeners for buttons
   document.getElementById('confirmSend').addEventListener('click', () => {
