@@ -13,6 +13,12 @@ const messages = [
     { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
     { role: "user", content: "Haha, that's a good one!" },
     { role: "assistant", content: "I'm glad you liked it!" },
+    { role: "user", content: "Can you give me some coding tips?" },{ role: "assistant", content: "I'm glad you liked it!" },
+    { role: "user", content: "Can you give me some coding tips?" },
+    { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },
+    { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
+    { role: "user", content: "Haha, that's a good one!" },
+    { role: "assistant", content: "I'm glad you liked it!" },
     { role: "user", content: "Can you give me some coding tips?" },
   ];
 
@@ -41,6 +47,9 @@ function displayMessage(message) {
             container.appendChild(createAssistantMessage(message));
             break;
     }
+
+    const containerWrapper = document.getElementsByClassName('message-history-wrapper')[0];
+    containerWrapper.scrollTop = containerWrapper.scrollHeight;
 }
 
 function createUserMessage(message) {
