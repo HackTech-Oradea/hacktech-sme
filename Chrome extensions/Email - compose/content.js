@@ -11,7 +11,7 @@ function createPopup() {
       <p><strong>Subject:</strong> subjectContent</p>
       <div class="body-content">
         <strong>Body:</strong>
-        <div class="scroll-content"> bodyContent </div>
+        <textarea id="emailBody" rows="10" cols="50" class="scroll-content"></textarea>
       </div>
       <div class="button-container">
         <button id="confirmSend">Send</button>
@@ -22,8 +22,15 @@ function createPopup() {
 
   document.body.appendChild(popup);
 
+  // Set the initial value of the textarea
+  document.getElementById('emailBody').value = 'bodyContent';
+
   // Add event listeners for buttons
   document.getElementById('confirmSend').addEventListener('click', () => {
+    // Get the updated email body content
+    const updatedBody = document.getElementById('emailBody').value;
+    // Here you can add logic to update the email body with the new content
+    
     popup.remove();
     // Continue with the original send action
     originalSendFunction();

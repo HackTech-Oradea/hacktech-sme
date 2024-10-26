@@ -83,3 +83,14 @@ button {
 .FI {
   position: relative;
 }
+
+.gmail-interceptor-popup textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  resize: vertical;
+}
