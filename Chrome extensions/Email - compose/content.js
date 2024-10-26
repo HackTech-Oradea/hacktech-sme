@@ -7,10 +7,15 @@ function createPopup() {
   popup.innerHTML = `
     <div class="popup-content">
       <h2>Email Details</h2>
-      <p><strong>To:</strong> $ToField value</p>
-      <p><strong>Subject:</strong> subjectContent</p>
+      <div class="message-bubble to-field">
+        <span class="label">To:</span>
+        <span class="value">$ToField value</span>
+      </div>
+      <div class="message-bubble subject-field">
+        <span class="label">Subject:</span>
+        <span class="value">subjectContent</span>
+      </div>
       <div class="body-content">
-        <strong>Body:</strong>
         <textarea id="emailBody" rows="10" cols="50" class="scroll-content"></textarea>
       </div>
       <div class="button-container">
