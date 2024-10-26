@@ -138,3 +138,13 @@ button {
   display: table;
   clear: both;
 }
+
+#emailBody {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

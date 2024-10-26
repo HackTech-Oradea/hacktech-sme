@@ -14,7 +14,7 @@ function createPopup() {
         <span class="value">subjectContent</span>
       </div>
       <div class="body-content">
-        <textarea id="emailBody" rows="10" cols="50" class="scroll-content"></textarea>
+        <textarea id="emailBody" rows="1" cols="50" class="scroll-content"></textarea>
       </div>
       <div class="button-container">
         <button id="confirmSend">Send</button>
@@ -26,12 +26,19 @@ function createPopup() {
   document.body.appendChild(popup);
 
   // Set the initial value of the textarea
-  document.getElementById('emailBody').value = 'bodyContent';
+  const emailBodyTextarea = document.getElementById('emailBody');
+  emailBodyTextarea.value = 'bodyContent';
+  
+  // Adjust textarea height to fit content
+  emailBodyTextarea.style.overflow = 'hidden';
+  emailBodyTextarea.style.resize = 'none';
+  emailBodyTextarea.style.height = 'auto';
+  emailBodyTextarea.style.height = emailBodyTextarea.scrollHeight + 'px';
 
   // Add event listeners for buttons
   document.getElementById('confirmSend').addEventListener('click', () => {
     // Get the updated email body content
-    const updatedBody = document.getElementById('emailBody').value;
+    const updatedBody = emailBodyTextarea.value;
     // Here you can add logic to update the email body with the new content
     
     popup.remove();
