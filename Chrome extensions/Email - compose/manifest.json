@@ -15,7 +15,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["botIcon.jpg"],
+      "resources": ["botIcon.png"],
       "matches": ["https://mail.google.com/*"]
     }
   ]

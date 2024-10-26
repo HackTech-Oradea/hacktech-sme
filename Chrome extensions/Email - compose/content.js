@@ -44,7 +44,7 @@ function addIconButton() {
     if (supportButton && !document.querySelector('.bot-icon-button')) {
       // Create the icon button
       const iconButton = document.createElement('img');
-      iconButton.src = chrome.runtime.getURL('botIcon.jpg');
+      iconButton.src = chrome.runtime.getURL('botIcon.png');
       iconButton.className = 'Xy bot-icon-button';
       iconButton.style.width = '24px';
       iconButton.style.height = '24px';
