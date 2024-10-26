@@ -44,14 +44,18 @@ function interceptSendButton() {
     if (sendButton && !sendButton.hasAttribute('intercepted')) {
       sendButton.setAttribute('intercepted', 'true');
 
-      // Create the "ClickMe" button
-      const clickMeButton = document.createElement('button');
-      clickMeButton.textContent = 'ClickMe';
-      clickMeButton.className = 'T-I J-J5-Ji aoO v7 T-I-atl L3';
-      clickMeButton.style.marginRight = '10px';
+      // Create the icon button
+      const iconButton = document.createElement('img');
+      iconButton.src = chrome.runtime.getURL('botIcon.png');
+      iconButton.className = 'bot-icon-button';
+      iconButton.style.width = '24px';
+      iconButton.style.height = '24px';
+      iconButton.style.marginRight = '10px';
+      iconButton.style.cursor = 'pointer';
+      iconButton.title = 'Click to review email'; // Add tooltip
 
-      // Add click event listener to the "ClickMe" button
-      clickMeButton.addEventListener('click', (e) => {
+      // Add click event listener to the icon button
+      iconButton.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         
@@ -67,15 +71,14 @@ function interceptSendButton() {
 
         const toField = allEmails;
         const subjectContent = document.querySelector('[name="subjectbox"][aria-label="Subject"]').value;
-
         const bodyContent = document.querySelector('[role="textbox"][aria-label="Message Body"]').innerHTML;
 
         // Show our popup
         createPopup(toField, subjectContent, bodyContent);
       });
 
-      // Insert the "ClickMe" button before the Send button
-      sendButton.parentNode.insertBefore(clickMeButton, sendButton);
+      // Insert the icon button before the Send button
+      sendButton.parentNode.insertBefore(iconButton, sendButton);
 
       // Store original click handler
       const originalClick = sendButton.onclick;
