@@ -17,10 +17,12 @@ function createPopup() {
         </div>
       </div>
       <div class="body-content">
-        <textarea id="emailBody" rows="1" cols="50" class="scroll-content"></textarea>
-      </div>
-      <div class="button-container">
-        <button id="confirmSend">Send</button>
+        <div class="input-wrapper">
+          <div class="input-container">
+            <textarea id="emailBody" rows="1" cols="50" placeholder="Vorbeste cu AI-ul tau personal" class="scroll-content"></textarea>
+            <button id="confirmSend">Send</button>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -29,7 +31,6 @@ function createPopup() {
 
   // Set the initial value of the textarea
   const emailBodyTextarea = document.getElementById('emailBody');
-  emailBodyTextarea.value = 'bodyContent';
   
   // Adjust textarea height to fit content
   emailBodyTextarea.style.overflowY = 'scroll';
