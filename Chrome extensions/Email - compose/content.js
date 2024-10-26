@@ -44,17 +44,22 @@ function addIconButton() {
     if (supportButton && !document.querySelector('.bot-icon-button')) {
       // Create the icon button
       const iconButton = document.createElement('img');
-      iconButton.src = chrome.runtime.getURL('botIcon.png');
-      iconButton.className = 'gb_he gb_h gb_fd t6 bot-icon-button';
+      iconButton.src = chrome.runtime.getURL('botIcon.jpg');
+      iconButton.className = 'Xy bot-icon-button';
       iconButton.style.width = '24px';
       iconButton.style.height = '24px';
       iconButton.style.cursor = 'pointer';
       iconButton.style.verticalAlign = 'middle';
-      iconButton.style.marginRight = '10px';
       iconButton.title = 'Click to review email';
 
-      // Add click event listener to the icon button
-      iconButton.addEventListener('click', (e) => {
+      // Create the <a> element to wrap the icon button
+      const iconLink = document.createElement('a');
+      iconLink.className = 'FH';
+      iconLink.href = '#';
+      iconLink.appendChild(iconButton);
+
+      // Add click event listener to the icon link
+      iconLink.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         
@@ -73,13 +78,13 @@ function addIconButton() {
         createPopup(toField, subjectContent, bodyContent);
       });
 
-      // Create the wrapper div for the icon button
+      // Create the wrapper div for the icon link
       const iconWrapper = document.createElement('div');
-      iconWrapper.className = 'zo';
+      iconWrapper.className = 'FI';
       iconWrapper.setAttribute('data-tooltip', 'Support');
-      iconWrapper.appendChild(iconButton);
+      iconWrapper.appendChild(iconLink);
 
-      // Insert the wrapped icon button before the parent of the Support button
+      // Insert the wrapped icon link before the parent of the Support button
       const supportButtonParent = supportButton.parentNode;
       supportButtonParent.parentNode.insertBefore(iconWrapper, supportButtonParent);
 
