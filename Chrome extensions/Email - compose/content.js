@@ -1,4 +1,4 @@
-function createPopup(toField, subjectContent, bodyContent) {
+function createPopup() {
   // Create popup container
   const popup = document.createElement('div');
   popup.className = 'gmail-interceptor-popup';
@@ -7,11 +7,11 @@ function createPopup(toField, subjectContent, bodyContent) {
   popup.innerHTML = `
     <div class="popup-content">
       <h2>Email Details</h2>
-      <p><strong>To:</strong> ${toField}</p>
-      <p><strong>Subject:</strong> ${subjectContent}</p>
+      <p><strong>To:</strong> $ToField value</p>
+      <p><strong>Subject:</strong> subjectContent</p>
       <div class="body-content">
         <strong>Body:</strong>
-        <div class="scroll-content">${bodyContent}</div>
+        <div class="scroll-content"> bodyContent </div>
       </div>
       <div class="button-container">
         <button id="confirmSend">Send</button>
@@ -78,18 +78,9 @@ function addIconButton() {
         e.stopPropagation();
         
         // Get compose window content
-        var allEmails = "";
-        var toFields = document.getElementsByClassName('akl');
-        for (var i = 0; i < toFields.length; i++) {
-          allEmails = allEmails + " " + toFields[i].textContent;
-        }
-
-        const toField = allEmails;
-        const subjectContent = document.querySelector('[name="subjectbox"][aria-label="Subject"]').value;
-        const bodyContent = document.querySelector('[role="textbox"][aria-label="Message Body"]').innerHTML;
 
         // Show our popup
-        createPopup(toField, subjectContent, bodyContent);
+        createPopup();
       });
 
       // Create the wrapper div for the icon link and pop-up banner
