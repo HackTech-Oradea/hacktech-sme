@@ -18,7 +18,6 @@ function createPopup() {
       </div>
       <div class="button-container">
         <button id="confirmSend">Send</button>
-        <button id="cancelSend">Cancel</button>
       </div>
     </div>
   `;
