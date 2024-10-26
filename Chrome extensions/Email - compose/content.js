@@ -6,6 +6,7 @@ function createPopup() {
   // Create popup content
   popup.innerHTML = `
     <div class="popup-content">
+      <button class="close-button">&times;</button>
       <h2>Email Details</h2>
       <div class="message-bubble user-role">
         <span class="value">$ToField value</span>
@@ -46,7 +47,8 @@ function createPopup() {
     originalSendFunction();
   });
 
-  document.getElementById('cancelSend').addEventListener('click', () => {
+  // Add event listener for the close button
+  document.querySelector('.close-button').addEventListener('click', () => {
     popup.remove();
   });
 }
