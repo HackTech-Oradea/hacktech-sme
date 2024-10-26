@@ -37,31 +37,27 @@ function createPopup(toField, subjectContent, bodyContent) {
 // Store the original send function
 let originalSendFunction;
 
-// Monitor DOM for the send button
-function interceptSendButton() {
+// Monitor DOM for the support button and add our icon
+function addIconButton() {
   const observer = new MutationObserver((mutations) => {
-    const sendButton = document.querySelector('[aria-label="Send ‪(Ctrl-Enter)‬"]');
-    if (sendButton && !sendButton.hasAttribute('intercepted')) {
-      sendButton.setAttribute('intercepted', 'true');
-
+    const supportButton = document.querySelector('[aria-label="Support"]');
+    if (supportButton && !document.querySelector('.bot-icon-button')) {
       // Create the icon button
       const iconButton = document.createElement('img');
       iconButton.src = chrome.runtime.getURL('botIcon.png');
-      iconButton.className = 'bot-icon-button';
+      iconButton.className = 'gb_he gb_h gb_fd t6 bot-icon-button';
       iconButton.style.width = '24px';
       iconButton.style.height = '24px';
-      iconButton.style.marginRight = '10px';
       iconButton.style.cursor = 'pointer';
-      iconButton.title = 'Click to review email'; // Add tooltip
+      iconButton.style.verticalAlign = 'middle';
+      iconButton.style.marginRight = '10px';
+      iconButton.title = 'Click to review email';
 
       // Add click event listener to the icon button
       iconButton.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         
-        // Store original send function for later use
-        originalSendFunction = originalClick;
-
         // Get compose window content
         var allEmails = "";
         var toFields = document.getElementsByClassName('akl');
@@ -77,17 +73,18 @@ function interceptSendButton() {
         createPopup(toField, subjectContent, bodyContent);
       });
 
-      // Insert the icon button before the Send button
-      sendButton.parentNode.insertBefore(iconButton, sendButton);
+      // Create the wrapper div for the icon button
+      const iconWrapper = document.createElement('div');
+      iconWrapper.className = 'zo';
+      iconWrapper.setAttribute('data-tooltip', 'Support');
+      iconWrapper.appendChild(iconButton);
 
-      // Store original click handler
-      const originalClick = sendButton.onclick;
+      // Insert the wrapped icon button before the parent of the Support button
+      const supportButtonParent = supportButton.parentNode;
+      supportButtonParent.parentNode.insertBefore(iconWrapper, supportButtonParent);
 
-      sendButton.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-      };
+      // Stop observing once the button is added
+      observer.disconnect();
     }
   });
 
@@ -97,5 +94,5 @@ function interceptSendButton() {
   });
 }
 
-// Initialize the interception
-interceptSendButton();
+// Initialize the button addition
+addIconButton();
