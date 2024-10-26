@@ -50,13 +50,27 @@ function addIconButton() {
       iconButton.style.height = '24px';
       iconButton.style.cursor = 'pointer';
       iconButton.style.verticalAlign = 'middle';
-      iconButton.title = 'Click to review email';
+      //iconButton.title = 'Click to review email';
 
       // Create the <a> element to wrap the icon button
       const iconLink = document.createElement('a');
       iconLink.className = 'FH';
       iconLink.href = '#';
       iconLink.appendChild(iconButton);
+
+      // Create the pop-up banner
+      const popupBanner = document.createElement('div');
+      popupBanner.className = 'ai-chatbot-popup';
+      popupBanner.textContent = 'Try our AI ChatBot';
+      popupBanner.style.display = 'none';
+
+      // Add event listeners for showing/hiding the pop-up banner
+      iconLink.addEventListener('mouseenter', () => {
+        popupBanner.style.display = 'block';
+      });
+      iconLink.addEventListener('mouseleave', () => {
+        popupBanner.style.display = 'none';
+      });
 
       // Add click event listener to the icon link
       iconLink.addEventListener('click', (e) => {
@@ -78,15 +92,23 @@ function addIconButton() {
         createPopup(toField, subjectContent, bodyContent);
       });
 
-      // Create the wrapper div for the icon link
+      // Create the wrapper div for the icon link and pop-up banner
       const iconWrapper = document.createElement('div');
       iconWrapper.className = 'FI';
-      iconWrapper.setAttribute('data-tooltip', 'Support');
       iconWrapper.appendChild(iconLink);
+      iconWrapper.appendChild(popupBanner);
 
       // Insert the wrapped icon link before the parent of the Support button
       const supportButtonParent = supportButton.parentNode;
       supportButtonParent.parentNode.insertBefore(iconWrapper, supportButtonParent);
+
+      // Show the banner after a short delay
+      setTimeout(() => {
+        popupBanner.style.display = 'block';
+        setTimeout(() => {
+          popupBanner.style.display = 'none';
+        }, 5000); // Hide the banner after 5 seconds
+      }, 1000); // Show the banner 1 second after the icon is added
 
       // Stop observing once the button is added
       observer.disconnect();
@@ -99,5 +121,7 @@ function addIconButton() {
   });
 }
 
-// Initialize the button addition
-addIconButton();
+// Initialize the button addition after the page has loaded
+window.onload = () => {
+  setTimeout(addIconButton, 1000); // Wait for 1 second after the page load event
+};

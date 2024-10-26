@@ -52,3 +52,34 @@ button {
   background: #f1f3f4;
   color: #202124;
 }
+
+.ai-chatbot-popup {
+  position: absolute;
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.ai-chatbot-popup::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+  transform: translateX(-50%);
+}
+
+.FI {
+  position: relative;
+}
