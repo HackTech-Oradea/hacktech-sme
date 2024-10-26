@@ -6,18 +6,23 @@ function createPopup() {
   // Create popup content
   popup.innerHTML = `
     <div class="popup-content">
+      <button class="close-button">&times;</button>
       <h2>Email Details</h2>
-      <div class="message-bubble user-role">
-        <span class="value">$ToField value</span>
-      </div>
-      <div class="message-bubble assistant-role">
-        <span class="value">subjectContent</span>
+      <div class="email-info-container">
+        <div class="message-bubble user-role">
+          <span class="value">$ToField value</span>
+        </div>
+        <div class="message-bubble assistant-role">
+          <span class="value">subjectContent</span>
+        </div>
       </div>
       <div class="body-content">
-        <textarea id="emailBody" rows="1" cols="50" class="scroll-content"></textarea>
-      </div>
-      <div class="button-container">
-        <button id="confirmSend">Send</button>
+        <div class="input-wrapper">
+          <div class="input-container">
+            <textarea id="emailBody" rows="1" cols="50" placeholder="Vorbeste cu AI-ul tau personal" class="scroll-content"></textarea>
+            <button id="confirmSend">Send</button>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -26,7 +31,6 @@ function createPopup() {
 
   // Set the initial value of the textarea
   const emailBodyTextarea = document.getElementById('emailBody');
-  emailBodyTextarea.value = 'bodyContent';
   
   // Adjust textarea height to fit content
   emailBodyTextarea.style.overflowY = 'scroll';
@@ -46,7 +50,8 @@ function createPopup() {
     originalSendFunction();
   });
 
-  document.getElementById('cancelSend').addEventListener('click', () => {
+  // Add event listener for the close button
+  document.querySelector('.close-button').addEventListener('click', () => {
     popup.remove();
   });
 }
@@ -131,5 +136,5 @@ function addIconButton() {
 
 // Initialize the button addition after the page has loaded
 window.onload = () => {
-  setTimeout(addIconButton, 1000); // Wait for 1 second after the page load event
+  addIconButton();
 };
