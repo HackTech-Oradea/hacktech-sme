@@ -131,5 +131,5 @@ function addIconButton() {
 
 // Initialize the button addition after the page has loaded
 window.onload = () => {
-  setTimeout(addIconButton, 1000); // Wait for 1 second after the page load event
+  addIconButton();
 };
