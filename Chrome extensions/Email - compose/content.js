@@ -43,13 +43,17 @@ function interceptSendButton() {
     if (sendButton && !sendButton.hasAttribute('intercepted')) {
       sendButton.setAttribute('intercepted', 'true');
 
-      // Store original click handler
-      const originalClick = sendButton.onclick;
+      // Create the "ClickMe" button
+      const clickMeButton = document.createElement('button');
+      clickMeButton.textContent = 'ClickMe';
+      clickMeButton.className = 'T-I J-J5-Ji aoO v7 T-I-atl L3';
+      clickMeButton.style.marginRight = '10px';
 
-      sendButton.onclick = (e) => {
+      // Add click event listener to the "ClickMe" button
+      clickMeButton.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-
+        
         // Store original send function for later use
         originalSendFunction = originalClick;
 
@@ -65,6 +69,18 @@ function interceptSendButton() {
 
         // Show our popup
         createPopup(toField, bodyContent);
+      });
+
+      // Insert the "ClickMe" button before the Send button
+      sendButton.parentNode.insertBefore(clickMeButton, sendButton);
+
+      // Store original click handler
+      const originalClick = sendButton.onclick;
+
+      sendButton.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
       };
     }
   });
