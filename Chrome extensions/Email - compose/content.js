@@ -8,11 +8,13 @@ function createPopup() {
     <div class="popup-content">
       <button class="close-button">&times;</button>
       <h2>Email Details</h2>
-      <div class="message-bubble user-role">
-        <span class="value">$ToField value</span>
-      </div>
-      <div class="message-bubble assistant-role">
-        <span class="value">subjectContent</span>
+      <div class="email-info-container">
+        <div class="message-bubble user-role">
+          <span class="value">$ToField value</span>
+        </div>
+        <div class="message-bubble assistant-role">
+          <span class="value">subjectContent</span>
+        </div>
       </div>
       <div class="body-content">
         <textarea id="emailBody" rows="1" cols="50" class="scroll-content"></textarea>
