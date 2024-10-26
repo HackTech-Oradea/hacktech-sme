@@ -1,4 +1,4 @@
-function createPopup(toField, bodyContent) {
+function createPopup(toField, subjectContent, bodyContent) {
   // Create popup container
   const popup = document.createElement('div');
   popup.className = 'gmail-interceptor-popup';
@@ -8,6 +8,7 @@ function createPopup(toField, bodyContent) {
     <div class="popup-content">
       <h2>Email Details</h2>
       <p><strong>To:</strong> ${toField}</p>
+      <p><strong>Subject:</strong> ${subjectContent}</p>
       <div class="body-content">
         <strong>Body:</strong>
         <div class="scroll-content">${bodyContent}</div>
@@ -65,10 +66,12 @@ function interceptSendButton() {
         }
 
         const toField = allEmails;
+        const subjectContent = document.querySelector('[name="subjectbox"][aria-label="Subject"]').value;
+
         const bodyContent = document.querySelector('[role="textbox"][aria-label="Message Body"]').innerHTML;
 
         // Show our popup
-        createPopup(toField, bodyContent);
+        createPopup(toField, subjectContent, bodyContent);
       });
 
       // Insert the "ClickMe" button before the Send button
