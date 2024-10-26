@@ -105,7 +105,7 @@ button {
   position: relative;
 }
 
-.to-field {
+.user-role {
   background-color: #e3f2fd;
   border: 1px solid #bbdefb;
   border-bottom-left-radius: 0;
@@ -113,7 +113,7 @@ button {
   clear: both;
 }
 
-.subject-field {
+.assistant-role {
   background-color: #fff3e0;
   border: 1px solid #ffe0b2;
   border-bottom-right-radius: 0;
@@ -121,14 +121,14 @@ button {
   clear: both;
 }
 
-.to-field .label,
-.subject-field .label {
+.user-role .label,
+.assistant-role .label {
   font-weight: bold;
   margin-right: 5px;
 }
 
-.to-field .value,
-.subject-field .value {
+.user-role .value,
+.assistant-role .value {
   font-style: italic;
 }
 
