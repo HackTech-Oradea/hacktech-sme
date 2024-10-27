@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Global side panel",
+  "name": "Personal Document Assistent",
   "version": "1.0",
   "description": "Shows how to display the same side panel on every site using the Side Panel API.",
   "icons": {
@@ -17,5 +17,19 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "permissions": ["sidePanel"]
+  
+  "key": "klcljcngaenobohgdjalpieflbhfgngd",
+  "oauth2": {
+    "client_id": "438721631317-pshqgbdnkr28td0m1jgn2cdv3db5r78f.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.readonly",
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ]
+  },
+  "permissions": [
+    "sidePanel",
+    "identity",
+    "storage"
+  ]
 }

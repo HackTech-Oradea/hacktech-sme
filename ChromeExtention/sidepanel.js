@@ -1,41 +1,100 @@
+document.addEventListener('DOMContentLoaded', requestToken);
+initializeMessages();
 
-const messages = [
-    { role: "user", content: "Hello, how are you?" },
-    { role: "assistant", content: "I'm good, thank you! How can I help you today?" },
-    { role: "user", content: "What is the weather like?" },
-    { role: "assistant", content: "It's sunny with a light breeze today." },
-    { role: "user", content: "Can you tell me a joke?" },
-    { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
-    { role: "user", content: "Haha, that's a good one!" },
-    { role: "assistant", content: "I'm glad you liked it!" },
-    { role: "user", content: "Can you give me some coding tips?" },
-    { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },
-    { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
-    { role: "user", content: "Haha, that's a good one!" },
-    { role: "assistant", content: "I'm glad you liked it!" },
-    { role: "user", content: "Can you give me some coding tips?" },{ role: "assistant", content: "I'm glad you liked it!" },
-    { role: "user", content: "Can you give me some coding tips?" },
-    { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },
-    { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
-    { role: "user", content: "Haha, that's a good one!" },
-    { role: "assistant", content: "I'm glad you liked it!" },
-    { role: "user", content: "Can you give me some coding tips?" },
-  ];
-
-for (const message of messages) {
+for (let message of getMessages()) {
     displayMessage(message);
 }
 
 const form = document.getElementById('messageForm');
 form.addEventListener('submit', handleFormSubmit);
 
+
+
+
+
+
+
+
+function requestToken() {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({ action: 'getAuthToken' }, async function(response) {
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError.message);
+                reject(chrome.runtime.lastError);
+            } 
+            else {
+                localStorage.setItem('token', response.token);
+                resolve(response.token);
+            }
+        });
+    });
+}
+
+function getToken() {
+    chrome.storage.local.get('token', function(result) {
+        console.log("token result: ", result);
+        return result.value;
+    });
+}
+
+function saveMessages(messages) {
+    localStorage.setItem('messages', JSON.stringify(messages));
+}
+
+function initializeMessages() {
+    if (!localStorage.getItem('messages')) {
+        localStorage.setItem('messages', JSON.stringify([
+            { role: "user", content: "Hello, how are you?" },
+            { role: "assistant", content: "I'm good, thank you! How can I help you today?" },
+            { role: "user", content: "What is the weather like?" },
+            { role: "assistant", content: "It's sunny with a light breeze today." },
+            { role: "user", content: "Can you tell me a joke?" },
+            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
+            { role: "user", content: "Haha, that's a good one!" },
+            { role: "assistant", content: "I'm glad you liked it!" },
+            { role: "user", content: "Can you give me some coding tips?" },
+            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },  
+            { role: "assistant", content: "It's sunny with a light breeze today." },
+            { role: "user", content: "Can you tell me a joke?" },
+            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
+            { role: "user", content: "Haha, that's a good one!" },
+            { role: "assistant", content: "I'm glad you liked it!" },
+            { role: "user", content: "Can you give me some coding tips?" },
+            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },
+            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
+            { role: "user", content: "Haha, that's a good one!" },
+            { role: "assistant", content: "I'm glad you liked it!" },
+            { role: "user", content: "Can you give me some coding tips?" },
+            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },  { role: "assistant", content: "It's sunny with a light breeze today." },
+            { role: "user", content: "Can you tell me a joke?" },
+            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
+            { role: "user", content: "Haha, that's a good one!" },
+            { role: "assistant", content: "I'm glad you liked it!" },
+            { role: "user", content: "Can you give me some coding tips?" },
+            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },
+        ]));
+    }
+}
+
+function getMessages() {
+    return JSON.parse(localStorage.getItem('messages'));
+}
+
 function handleFormSubmit(event) {
+    console.log("Form submitted");
     event.preventDefault();
     const message = document.getElementById('message').value;
     document.getElementById('message').value = '';
 
     displayMessage({ role: 'user', content: message });
-  }
+    console.log(message);
+    if (localStorage.getItem('messages')) {
+        saveMessages([...getMessages(), { role: 'user', content: message }]);
+    }
+    else {
+        saveMessages([{ role: 'user', contetnt: message }]);
+    }
+}
 
 function displayMessage(message) {
     const container = document.getElementById('message-history');

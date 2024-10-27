@@ -1,13 +1,25 @@
   body {
-    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 6px 6px 0px 6px;
   }
   
-  .side-panel {
+  #side-panel {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 30px;
-    height: calc(100vh - 30px);
+    gap: 16px;
+    height: calc(100vh - 70px);
+  }
+
+  .synchronize {
+    align-self: flex-end;
+    margin-bottom: 12px;
+  }
+
+  #login.hidden {
+    display: none;
   }
 
   .message-history-wrapper{
@@ -52,8 +64,7 @@
     padding: 15px 8px;
     background-color: #e3f2fd;
     border: 1px solid #bbdefb;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
+    border-radius: 18px;
   }
 
   textarea {
@@ -63,7 +74,7 @@
   .submit-button {
     height: 20px;
   }
-  
+
   .message-history-wrapper::-webkit-scrollbar {
     width: 8px;
   }
