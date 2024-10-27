@@ -152,7 +152,6 @@ function createAssistantMessage(message) {
     bubble.classList.add('assistant-role');
     const value = document.createElement('span');
     value.classList.add('value');
-    value.innerHTML = marked(message.content);
     value.textContent = message.content;
     bubble.appendChild(value);
     return bubble;
