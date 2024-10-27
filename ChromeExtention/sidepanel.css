@@ -1,20 +1,37 @@
   body {
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 6px 6px 0px 6px;
   }
   
-  .side-panel {
+  #side-panel {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 30px;
-    height: calc(100vh - 100px);
+    gap: 16px;
+    height: calc(100vh - 70px);
+  }
+
+  .synchronize {
+    align-self: flex-end;
+    margin-bottom: 12px;
+  }
+
+  #login.hidden {
+    display: none;
+  }
+
+  .message-history-wrapper{
+    overflow-y: scroll;
+    padding: 8px;
   }
 
   #message-history {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     justify-content: flex-end;
+    flex-grow: 1;
     gap: 10px;
   }
   
@@ -22,7 +39,6 @@
     background-color: #f0f0f0;
     border-radius: 18px;
     padding: 10px 15px;
-    display: inline-block;
     overflow-wrap: break-word;
     max-width: 80%;
   }
@@ -48,8 +64,7 @@
     padding: 15px 8px;
     background-color: #e3f2fd;
     border: 1px solid #bbdefb;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
+    border-radius: 18px;
   }
 
   textarea {
@@ -60,153 +75,20 @@
     height: 20px;
   }
 
-  /* .popup-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 80%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  
-  .scroll-content {
-    overflow-y: scroll;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px 0;
-    height: 30px;
-  }
-  
-  textarea {
-    width: 100%;
-    min-height: 20px; /* Minimum height for one line 
-    max-height: 80px; /* Max height for 4 lines (20px x 4) 
-    resize: none; /* Disable resizing 
-    padding: 10px; /* Add padding for better appearance 
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  #confirmSend {
-    background: #1a73e8;
-    color: white;
-  }
-  
-  #cancelSend {
-    background: #f1f3f4;
-    color: #202124;
-  }
-  
-  .ai-chatbot-popup {
-    position: absolute;
-    background-color: #333;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-size: 14px;
-    white-space: nowrap;
-    z-index: 1000;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-  
-  .ai-chatbot-popup::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    border-width: 8px;
-    border-style: solid;
-    border-color: transparent transparent #333 transparent;
-    transform: translateX(-50%);
-  }
-  
-  .FI {
-    position: relative;
-  }
-  
-  .gmail-interceptor-popup textarea {
-    width: 100%;
-    min-height: 200px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    resize: vertical;
-  }
-  
-  .message-bubble {
-  }
-  
-  .user-role {
-  }
-  
-  .assistant-role {
-  }
-  
-  .user-role .label,
-  .assistant-role .label {
-    font-weight: bold;
-    margin-right: 5px;
-  }
-  
-  .user-role .value,
-  .assistant-role .value {
-    font-style: italic;
-  }
-  
-  .popup-content::after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-  
-  #emailBody {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 5px;
-    font-size: 14px;
-    line-height: 1.5;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-
-  
-  .scroll-content::-webkit-scrollbar {
+  .message-history-wrapper::-webkit-scrollbar {
     width: 8px;
   }
   
-  .scroll-content::-webkit-scrollbar-track {
+  .message-history-wrapper::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 50px;
   }
   
-  .scroll-content::-webkit-scrollbar-thumb {
+  .message-history-wrapper::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 10px;
   }
   
-  .scroll-content::-webkit-scrollbar-thumb:hover {
+  .message-history-wrapper::-webkit-scrollbar-thumb:hover {
     background: #555;
-  } */
+  }  
