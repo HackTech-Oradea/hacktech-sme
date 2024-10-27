@@ -100,6 +100,7 @@ function handleFormSubmit(event) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
             },
             body: JSON.stringify({ input: { messages: [...getMessages(), { type: 'human', content: message }] } }),
         })
