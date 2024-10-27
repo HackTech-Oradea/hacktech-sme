@@ -25,6 +25,7 @@ from PyPDF2 import PdfReader
 
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
+from langchain_core.messages import SystemMessage
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -227,7 +228,6 @@ async def gmail_get_tool(per_page: int, special_config_param: RunnableConfig) ->
                                         decoded_data = base64.b64decode(encoded_data).decode('utf-8')
                                         part["body"]["data"] = decoded_data
                                     except Exception as e:
-                                        print(f"Error decoding message part: {str(e)}")
                                         continue
                         full_messages.append(message_data)
                     else:
@@ -248,8 +248,19 @@ graph_builder = StateGraph(MessagesState)
 tools = [retriever_tool, gmail_get_tool]
 llm_with_tools = llm.bind_tools(tools)
 
+template = """
+You are Claudiu, an AI assistant that can help you with your questions.
+You can answer questions about the company's internal knowledge base, or about your emails.
+You will not be able to answer questions outside of these topics.
+You will always respond in Romanian.
+"""
+
+
+def get_messages_info(messages):
+    return [SystemMessage(content=template)] + messages
+
 def chatbot(state: MessagesState):
-    return {"messages": [llm_with_tools.invoke(state["messages"])]}
+    return {"messages": [llm_with_tools.invoke(get_messages_info(state["messages"]))]}
 
 graph_builder.add_node("chatbot", chatbot)
 
