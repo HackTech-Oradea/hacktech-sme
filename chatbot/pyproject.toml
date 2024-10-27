@@ -19,6 +19,10 @@ langchain-pinecone = "^0.2.0"
 python-dotenv = "^1.0.1"
 langgraph = "^0.2.39"
 langchain-community = "^0.3.3"
+langchain-text-splitters = "^0.3.0"
+pypdf2 = "^3.0.1"
+google-api-python-client = "^2.149.0"
+google-auth = "^2.35.0"
 
 
 [tool.poetry.group.dev.dependencies]
