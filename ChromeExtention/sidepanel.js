@@ -93,7 +93,6 @@ function handleFormSubmit(event) {
     document.getElementById('message').value = '';
 
     displayMessage({ type: 'human', content: message });
-    console.log(message);
     if (localStorage.getItem('messages')) {
         saveMessages([...getMessages(), { type: 'human', content: message }]);
         fetch('http://127.0.0.1:8000/chat/invoke', {
@@ -106,7 +105,6 @@ function handleFormSubmit(event) {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Success:', data);
             displayMessage({ type: 'ai', content: data.output });
             saveMessages([...getMessages(), { type: 'ai', content: data.output }]);
             hideLoadingIndicator();
