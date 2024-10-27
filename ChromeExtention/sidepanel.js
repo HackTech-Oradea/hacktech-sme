@@ -152,7 +152,7 @@ function createAssistantMessage(message) {
     bubble.classList.add('assistant-role');
     const value = document.createElement('span');
     value.classList.add('value');
-    value.textContent = message.content;
+    value.innerHTML = convertMarkdownToHTML(message.content);
     bubble.appendChild(value);
     return bubble;
 }
@@ -163,4 +163,28 @@ function showLoadingIndicator() {
 
 function hideLoadingIndicator() {
     document.getElementById('loading-indicator').style.display = 'none';
+}
+
+function convertMarkdownToHTML(markdown) {
+    function escapeHTML(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    let html = markdown;
+
+    html = html.replace(/mailto:([^\s\)]+)/g, '<a href="mailto:$1">$1</a>');
+    html = html.replace(/(https?:\/\/[^\s\)]+)/g, '<a href="$1">$1</a>');
+    html = html.replace(/### (.*?)$/gm, '<h3>$1</h3>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/^\d+\. (.*?)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*?<\/li>\n?)+/g, '<ol>$&</ol>');
+    html = html.replace(/^(?!<[oh])[^\n].*$/gm, '<p>$&</p>');
+    html = html.replace(/<\/ol>\s*<ol>/g, '');
+    
+    return html;
 }
