@@ -66,34 +66,7 @@ function saveMessages(messages) {
 function initializeMessages() {
     if (!localStorage.getItem('messages')) {
         localStorage.setItem('messages', JSON.stringify([
-            { role: "user", content: "Hello, how are you?" },
-            { role: "assistant", content: "I'm good, thank you! How can I help you today?" },
-            { role: "user", content: "What is the weather like?" },
-            { role: "assistant", content: "It's sunny with a light breeze today." },
-            { role: "user", content: "Can you tell me a joke?" },
-            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
-            { role: "user", content: "Haha, that's a good one!" },
-            { role: "assistant", content: "I'm glad you liked it!" },
-            { role: "user", content: "Can you give me some coding tips?" },
-            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },  
-            { role: "assistant", content: "It's sunny with a light breeze today." },
-            { role: "user", content: "Can you tell me a joke?" },
-            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
-            { role: "user", content: "Haha, that's a good one!" },
-            { role: "assistant", content: "I'm glad you liked it!" },
-            { role: "user", content: "Can you give me some coding tips?" },
-            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },
-            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
-            { role: "user", content: "Haha, that's a good one!" },
-            { role: "assistant", content: "I'm glad you liked it!" },
-            { role: "user", content: "Can you give me some coding tips?" },
-            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },  { role: "assistant", content: "It's sunny with a light breeze today." },
-            { role: "user", content: "Can you tell me a joke?" },
-            { role: "assistant", content: "Sure! Why did the scarecrow win an award? Because he was outstanding in his field!" },
-            { role: "user", content: "Haha, that's a good one!" },
-            { role: "assistant", content: "I'm glad you liked it!" },
-            { role: "user", content: "Can you give me some coding tips?" },
-            { role: "assistant", content: "Absolutely! Start by writing clean, readable code and make use of functions to keep things modular." },
+    
         ]));
     }
 }
@@ -113,23 +86,39 @@ function handleFormSubmit(event) {
 
     document.getElementById('message').value = '';
 
-    displayMessage({ role: 'user', content: message });
+    displayMessage({ type: 'human', content: message });
     console.log(message);
     if (localStorage.getItem('messages')) {
-        saveMessages([...getMessages(), { role: 'user', content: message }]);
+        saveMessages([...getMessages(), { type: 'human', content: message }]);
+    fetch('http://127.0.0.1:8000/chat/invoke', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input: { messages: [...getMessages(), { type: 'human', content: message }] } }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        displayMessage({ type: 'ai', content: data.output });
+        saveMessages([...getMessages(), { type: 'ai', content: data.output }]);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
     }
     else {
-        saveMessages([{ role: 'user', contetnt: message }]);
+        saveMessages([{ type: 'human', contetnt: message }]);
     }
 }
 
 function displayMessage(message) {
     const container = document.getElementById('message-history');
-    switch (message.role) {
-        case 'user':
+    switch (message.type) {
+        case 'human':
             container.appendChild(createUserMessage(message));
             break;
-        case 'assistant':
+        case 'ai':
             container.appendChild(createAssistantMessage(message));
             break;
     }
