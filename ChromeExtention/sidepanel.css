@@ -10,7 +10,7 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 16px;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 120px);
   }
 
   .synchronize {
@@ -27,6 +27,27 @@
 
   .synchronize:hover {
     background-color: #bbdefb;
+  }
+
+  .delete {
+    align-self: flex-end;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 18px;
+    background-color: #e3f2fd;
+  }
+
+  .delete:hover {
+    background-color: #bbdefb;
+  }
+
+  #delete:hover {
+    color: red;
+    cursor: pointer;
   }
 
   #login:hover {

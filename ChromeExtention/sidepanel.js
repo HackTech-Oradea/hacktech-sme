@@ -8,7 +8,8 @@ for (let message of getMessages()) {
 const sendButton = document.getElementById('sendButton');
 sendButton.addEventListener('click', handleFormSubmit);
 
-
+const deleteButton = document.getElementById('delete');
+deleteButton.addEventListener('click', deleteMessages);
 
 
 async function requestToken() {
@@ -73,6 +74,11 @@ function initializeMessages() {
 
 function getMessages() {
     return JSON.parse(localStorage.getItem('messages'));
+}
+
+function deleteMessages() {
+    localStorage.removeItem('messages');
+    document.getElementById('message-history').innerHTML = '';
 }
 
 function handleFormSubmit(event) {
