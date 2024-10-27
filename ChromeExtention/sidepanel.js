@@ -116,7 +116,7 @@ function handleFormSubmit(event) {
         });
     }
     else {
-        saveMessages([{ type: 'human', contetnt: message }]);
+        saveMessages([{ type: 'human', content: message }]);
     }
 }
 
