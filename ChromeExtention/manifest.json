@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Asistentul tău",
+  "name": "DocuMinte",
   "version": "1.0",
-  "description": "Foloseste asistentul tau pentru a te ajuta sa gasesti ceea ce ai nevoie.",
+  "description": "DocuMinte este asistentul tau pentru a te ajuta sa gasesti ceea ce ai nevoie.",
   "icons": {
     "128": "images/botIcon.png"
   },
