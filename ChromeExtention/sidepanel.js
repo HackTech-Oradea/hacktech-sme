@@ -5,8 +5,8 @@ for (let message of getMessages()) {
     displayMessage(message);
 }
 
-const form = document.getElementById('messageForm');
-form.addEventListener('submit', handleFormSubmit);
+const sendButton = document.getElementById('sendButton');
+sendButton.addEventListener('click', handleFormSubmit);
 
 
 
@@ -106,6 +106,11 @@ function handleFormSubmit(event) {
     console.log("Form submitted");
     event.preventDefault();
     const message = document.getElementById('message').value;
+
+    if (message == '') {
+        return;
+    }
+
     document.getElementById('message').value = '';
 
     displayMessage({ role: 'user', content: message });

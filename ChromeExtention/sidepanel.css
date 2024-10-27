@@ -16,6 +16,22 @@
   .synchronize {
     align-self: flex-end;
     margin-bottom: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 18px;
+    background-color: #e3f2fd;
+  }
+
+  .synchronize:hover {
+    background-color: #bbdefb;
+  }
+
+  #login:hover {
+    color: blue;
+    cursor: pointer;
   }
 
   #login.hidden {
@@ -60,9 +76,11 @@
   .message-area {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
-    padding: 15px 8px;
-    background-color: #e3f2fd;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 16px;
+    background-color: #fefeff;
     border: 1px solid #bbdefb;
     border-radius: 18px;
   }
@@ -72,7 +90,19 @@
   }
 
   .submit-button {
-    height: 20px;
+    padding: 6px 8px;
+    border-radius: 18px;
+    background-color: #e3f2fd;
+    font-size: 20px;
+  }
+
+  .submit-button:hover {
+    background-color: #bbdefb;
+  }
+
+  .send-icon:hover {
+    cursor: pointer;
+    color: blue;
   }
 
   .message-history-wrapper::-webkit-scrollbar {

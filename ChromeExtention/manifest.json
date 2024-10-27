@@ -1,18 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "Personal Document Assistent",
+  "name": "Asistentul tău",
   "version": "1.0",
-  "description": "Shows how to display the same side panel on every site using the Side Panel API.",
+  "description": "Foloseste asistentul tau pentru a te ajuta sa gasesti ceea ce ai nevoie.",
   "icons": {
-    "16": "images/icon-16.png",
-    "48": "images/icon-48.png",
-    "128": "images/icon-128.png"
+    "128": "images/botIcon.png"
   },
   "background": {
     "service_worker": "service-worker.js"
   },
   "action": {
-    "default_title": "Click to open panel"
+    "default_title": "Click pentru a folosi"
   },
   "side_panel": {
     "default_path": "sidepanel.html"

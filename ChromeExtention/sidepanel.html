@@ -1,12 +1,14 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>Personal Document Assistent</title>
     <link rel="stylesheet" href="sidepanel.css">
   </head>
   <body>
-    <div class="synchronize">
-      <button id="login">Synchronize Drive</button>
+    <div id="login" class="synchronize">
+      <span class="synchronize-text">Sincronizează-ți documentele</span>
+      <i class="fa-solid fa-arrows-rotate"></i>
     </div>
 
 
@@ -17,11 +19,11 @@
         </div>
       </div>
       <form id="messageForm" class="message-area">
-        <textarea id="message" rows="5" cols="40" placeholder="Type your message here..."></textarea><br><br>
-        <button class="submit-button" type="submit">Send</button>
+        <textarea id="message" rows="5" cols="40" placeholder="Scrie un mesaj..."></textarea><br><br>
+        <div id="sendButton" class="submit-button"><i class="fa-regular fa-paper-plane send-icon"></i></div>
       </form>
     </div>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">
     <script src="sidepanel.js"></script>
   </body>
 </html>
