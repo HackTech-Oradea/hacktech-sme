@@ -11,11 +11,7 @@ form.addEventListener('submit', handleFormSubmit);
 
 
 
-
-
-
-
-function requestToken() {
+async function requestToken() {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage({ action: 'getAuthToken' }, async function(response) {
             if (chrome.runtime.lastError) {
@@ -24,17 +20,43 @@ function requestToken() {
             } 
             else {
                 localStorage.setItem('token', response.token);
+
+                const email = await requestEmail(response.token);
+                localStorage.setItem('email', email);
+
                 resolve(response.token);
             }
         });
     });
 }
 
+async function requestEmail(accessToken) {
+    try {
+        const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to retrieve user information');
+        }
+
+        const userInfo = await response.json();
+        const email = userInfo.email;
+
+        return email;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 function getToken() {
-    chrome.storage.local.get('token', function(result) {
-        console.log("token result: ", result);
-        return result.value;
-    });
+    return localStorage.getItem('token');
+}
+
+function getEmail() {
+    return localStorage.getItem('email');
 }
 
 function saveMessages(messages) {
