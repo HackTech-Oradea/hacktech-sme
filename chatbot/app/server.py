@@ -1,3 +1,4 @@
+import base64
 from typing import Any, AsyncIterator, Dict
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import RedirectResponse
@@ -21,6 +22,10 @@ from langchain.tools.retriever import create_retriever_tool
 from langchain.prompts import PromptTemplate
 from langchain_openai import OpenAIEmbeddings
 from PyPDF2 import PdfReader
+
+from langchain_core.runnables import RunnableConfig
+from langchain_core.tools import tool
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 security = HTTPBearer()
@@ -180,10 +185,67 @@ retriever_tool = create_retriever_tool(
     """,
 )
 
+
+@tool
+async def gmail_get_tool(per_page: int, special_config_param: RunnableConfig) -> str:
+    """Get emails from gmail per page"""
+    import httpx
+
+    async with httpx.AsyncClient() as client:
+        headers = {
+            "Authorization": f"Bearer {special_config_param['configurable']['token']}",
+            "Accept": "application/json"
+        }
+        response = await client.get(
+            "https://gmail.googleapis.com/gmail/v1/users/me/messages",
+            headers=headers,
+            params={"maxResults": per_page}
+        )
+
+        if response.status_code == 200:
+            messages = response.json().get("messages", [])
+            full_messages = []
+            for message in messages:
+                message_id = message.get("id")
+                if message_id:
+                    message_response = await client.get(
+                        f"https://gmail.googleapis.com/gmail/v1/users/me/messages/{message_id}?format=full",
+                        headers=headers
+                    )
+                    if message_response.status_code == 200:
+                        message_data = message_response.json()
+                        if "payload" in message_data and "parts" in message_data["payload"]:
+                            for part in message_data["payload"]["parts"]:
+                                if "body" in part and "data" in part["body"]:
+                                    encoded_data = part["body"]["data"]
+                                    # Replace URL-safe characters and add padding
+                                    encoded_data = encoded_data.replace('-', '+').replace('_', '/')
+                                    padding = 4 - (len(encoded_data) % 4)
+                                    if padding != 4:
+                                        encoded_data += '=' * padding
+                                    try:
+                                        decoded_data = base64.b64decode(encoded_data).decode('utf-8')
+                                        part["body"]["data"] = decoded_data
+                                    except Exception as e:
+                                        print(f"Error decoding message part: {str(e)}")
+                                        continue
+                        full_messages.append(message_data)
+                    else:
+                        raise HTTPException(
+                            status_code=message_response.status_code,
+                            detail=f"Failed to fetch full message: {message_response.text}"
+                        )
+            return json.dumps(full_messages)
+        else:
+            raise HTTPException(
+                status_code=response.status_code,
+                detail=f"Failed to fetch emails: {response.text}"
+            )
+
 llm = ChatOpenAI(model="gpt-4o-mini")
 graph_builder = StateGraph(MessagesState)
 
-tools = [retriever_tool]
+tools = [retriever_tool, gmail_get_tool]
 llm_with_tools = llm.bind_tools(tools)
 
 def chatbot(state: MessagesState):
@@ -272,6 +334,8 @@ agent_runnable = RunnableLambda(custom_stream)
 add_routes(app, 
            agent_runnable,
            path="/chat",
+           dependencies=[Depends(validate_token)],
+           per_req_config_modifier=fetch_api_key_from_header,
            config_keys=["configurable"])
 
 add_routes(app,
