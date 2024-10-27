@@ -1,8 +1,9 @@
-from typing import Any, Dict
+from typing import Any, AsyncIterator, Dict
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2PasswordBearer
 from langchain_pinecone import PineconeVectorStore
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langserve import add_routes
 from langchain_core.runnables import RunnableLambda, RunnableConfig
 
@@ -16,8 +17,10 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 import io
 import os
-
+from langchain.tools.retriever import create_retriever_tool
+from langchain.prompts import PromptTemplate
 from langchain_openai import OpenAIEmbeddings
+from PyPDF2 import PdfReader
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 security = HTTPBearer()
@@ -56,12 +59,13 @@ class GoogleDriveHandler:
     def authenticate(self):
         with open(self.credentials_path, 'r') as file:
             creds_dict = json.load(file)
-        creds = Credentials.to(creds_dict, scopes=self.SCOPES)
+        creds = Credentials.from_service_account_info(creds_dict, scopes=self.SCOPES)
         return creds
 
     def list_files(self, page_size=10):
         results = self.service.files().list(pageSize=page_size, fields="nextPageToken, files(id, name, mimeType)").execute()
         items = results.get('files', [])
+        items = [item for item in items if item['mimeType'] != 'application/vnd.google-apps.folder']
         if not items:
             print('No files found.')
             return []
@@ -77,38 +81,76 @@ class GoogleDriveHandler:
             'application/vnd.google-apps.spreadsheet': 'text/csv',
             'application/vnd.google-apps.presentation': 'text/plain'
         }
+        print(f"Starting text extraction for file: {file_name} ({file_id}) with MIME type: {mime_type}")
 
-        if mime_type.startswith('application/vnd.google-apps.'):
-            if mime_type in export_mime_types:
-                export_mime_type = export_mime_types[mime_type]
-                request = self.service.files().export_media(fileId=file_id, mimeType=export_mime_type)
+        try: 
+            if mime_type.startswith('application/vnd.google-apps.'):
+                if mime_type in export_mime_types:
+                    export_mime_type = export_mime_types[mime_type]
+                    request = self.service.files().export_media(fileId=file_id, mimeType=export_mime_type)
+                else:
+                    print(f'Skipping unsupported Google Apps file type: {file_name} ({mime_type})')
+                    return None
             else:
-                print(f'Skipping unsupported Google Apps file type: {file_name} ({mime_type})')
-                return
-        else:
-            request = self.service.files().get_media(fileId=file_id)
+                request = self.service.files().get_media(fileId=file_id)
 
-        file_stream = io.BytesIO()
-        downloader = MediaIoBaseDownload(file_stream, request)
-        done = False
-        while not done:
-            status, done = downloader.next_chunk()
-        file_stream.seek(0)
-        text_content = file_stream.read().decode('utf-8')
-        print(f'Text content of {file_name}:\n{text_content}\n')
-    
+            file_stream = io.BytesIO()
+            downloader = MediaIoBaseDownload(file_stream, request)
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+            
+            file_stream.seek(0)
+            
+            # Handle PDF files
+            if mime_type == 'application/pdf':
+                try:
+                    pdf_reader = PdfReader(file_stream)
+                    text_content = ""
+                    for page in pdf_reader.pages:
+                        text_content += page.extract_text() + "\n"
+                    print(f"Successfully extracted text from PDF {file_name} with {len(text_content)} characters")
+                    return text_content
+                except Exception as e:
+                    print(f'Error processing PDF {file_name}: {str(e)}')
+                    return None
+            
+            # Handle other text files
+            encodings = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
+            text_content = None
+            
+            for encoding in encodings:
+                try:
+                    
+                    text_content = file_stream.read().decode(encoding)
+                    file_stream.seek(0)  # Reset position for next attempt if needed
+                    break
+                except UnicodeDecodeError:
+                    continue
+            
+            if text_content is None:
+                print(f'Could not decode {file_name} with any supported encoding')
+                return None
+                
+            print(f'Successfully extracted text from {file_name}')
+            return text_content
+            
+        except Exception as e:
+            print(f'Error processing {file_name}: {str(e)}')
+            return None
+
     def call(self):
-        creds = self.authenticate()
-        service = build('drive', 'v3', credentials=creds)
-
-        # List files
-        files = self.list_files(service)
+        # List files - call list_files with self instead of service
+        files = self.list_files()
 
         texts = []
         # Read files
         for file in files:
-            texts.append(self.extract_text(file['id'], file['name'], file['mimeType']))
-        
+            text = self.extract_text(file['id'], file['name'], file['mimeType'])
+            print(f"Extracted text from {file['name']}: {text}")
+            if text:
+                texts.append(text)
+        print(f"Extracted {len(texts)} texts from {len(files)} files")
         metadatas = []
         for file in files:
             metadatas.append({
@@ -117,28 +159,47 @@ class GoogleDriveHandler:
             })
         return texts, metadatas
         
+DEFAULT_DOCUMENT_PROMPT = PromptTemplate.from_template(
+    """
+    ###TITLE OF THE PAGE:{title}
+    ###PAGE URL:{url}
+    ###PAGE CONTENT:
+    {page_content}
+    """
+)
 
+retriever_tool = create_retriever_tool(
+    vectorstore.as_retriever(search_kwargs={"k": 3}),
+    name="internal_knowledge_base_retriever",
+    document_prompt=DEFAULT_DOCUMENT_PROMPT,
+    document_separator="\n\n",
+    description=f"""
+    Retrieve documents from the internal company knowledge base.
+    The search query should take into consideration the previous messages in the chat history
+
+    """,
+)
 
 llm = ChatOpenAI(model="gpt-4o-mini")
 graph_builder = StateGraph(MessagesState)
 
-# tools = [tool]
-# llm_with_tools = llm.bind_tools(tools)
+tools = [retriever_tool]
+llm_with_tools = llm.bind_tools(tools)
 
 def chatbot(state: MessagesState):
-    return {"messages": [llm.invoke(state["messages"])]}
+    return {"messages": [llm_with_tools.invoke(state["messages"])]}
 
 graph_builder.add_node("chatbot", chatbot)
 
-# tool_node = ToolNode(tools=[tool])
-# graph_builder.add_node("tools", tool_node)
+tool_node = ToolNode(tools=tools)
+graph_builder.add_node("tools", tool_node)
 
-# graph_builder.add_conditional_edges(
-#     "chatbot",
-#     tools_condition,
-# )
+graph_builder.add_conditional_edges(
+    "chatbot",
+    tools_condition,
+)
 
-# graph_builder.add_edge("tools", "chatbot")
+graph_builder.add_edge("tools", "chatbot")
 graph_builder.add_edge(START, "chatbot")
 
 graph = graph_builder.compile()    
@@ -172,60 +233,50 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(security)
             detail="Invalid authentication credentials",
         )
 
-import aiohttp
+def get_split_documents(texts, metadatas):
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        model_name="gpt-4",
+        chunk_size=800,
+        chunk_overlap=200,
+    )
+    documents = text_splitter.create_documents(texts=texts, metadatas=metadatas)
+    return documents
 
 async def ingest(input, config: RunnableConfig):
-    token = config["configurable"]["token"]
+    gdrive = GoogleDriveHandler()
+    texts, metadatas = gdrive.call()
 
-    async with aiohttp.ClientSession() as session:
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/json"
-        }
-        async with session.get("https://www.googleapis.com/drive/v3/files", headers=headers) as response:
-            if response.status == 200:
-                files = await response.json()
-                file_contents = []
-                for file in files.get('files', []):
-                    file_id = file.get('id')
-                    if file_id:
-                        async with session.get(f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media", headers=headers) as file_response:
-                            if file_response.status == 200:
-                                content = await file_response.text()
-                                file_contents.append({
-                                    "id": file_id,
-                                    "name": file.get('name'),
-                                    "content": content
-                                })
-                            else:
-                                raise HTTPException(
-                                    status_code=file_response.status,
-                                    detail=f"Failed to fetch content for file ID {file_id}"
-                                )
-                return file_contents
-            else:
-                raise HTTPException(
-                    status_code=response.status,
-                    detail="Failed to fetch files from Google Drive"
-                )
-    return token
+    vectorstore.add_documents(get_split_documents(texts, metadatas))
+    
+    return True
 
 ingest_runnable = RunnableLambda(ingest)
 
+
+async def custom_stream(input, config) -> AsyncIterator[str]:
+    agent_executor = graph
+    async for event in agent_executor.astream_events(input={
+        "messages": input["messages"],
+        },
+        config=config,
+        version="v1",
+    ):
+        kind = event["event"]
+        if kind == "on_chat_model_stream":
+            content = event["data"]["chunk"].content
+            if content:
+                yield content
+        
+agent_runnable = RunnableLambda(custom_stream)
+
 add_routes(app, 
-           graph,
+           agent_runnable,
            path="/chat",
-           dependencies=[Depends(validate_token)],
-           per_req_config_modifier=fetch_api_key_from_header,
-           disabled_endpoints=["playground"],
            config_keys=["configurable"])
 
 add_routes(app,
            ingest_runnable,
            path="/ingest",
-           dependencies=[Depends(validate_token)],
-           per_req_config_modifier=fetch_api_key_from_header,
-           disabled_endpoints=["playground"],
            config_keys=["configurable"])
 
 
