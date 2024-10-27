@@ -76,36 +76,37 @@ function getMessages() {
 }
 
 function handleFormSubmit(event) {
-    console.log("Form submitted");
     event.preventDefault();
     const message = document.getElementById('message').value;
-
+    
     if (message == '') {
         return;
     }
-
+    
+    showLoadingIndicator();
     document.getElementById('message').value = '';
 
     displayMessage({ type: 'human', content: message });
     console.log(message);
     if (localStorage.getItem('messages')) {
         saveMessages([...getMessages(), { type: 'human', content: message }]);
-    fetch('http://127.0.0.1:8000/chat/invoke', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ input: { messages: [...getMessages(), { type: 'human', content: message }] } }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        displayMessage({ type: 'ai', content: data.output });
-        saveMessages([...getMessages(), { type: 'ai', content: data.output }]);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+        fetch('http://127.0.0.1:8000/chat/invoke', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ input: { messages: [...getMessages(), { type: 'human', content: message }] } }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            displayMessage({ type: 'ai', content: data.output });
+            saveMessages([...getMessages(), { type: 'ai', content: data.output }]);
+            hideLoadingIndicator();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     }
     else {
         saveMessages([{ type: 'human', contetnt: message }]);
@@ -147,4 +148,12 @@ function createAssistantMessage(message) {
     value.textContent = message.content;
     bubble.appendChild(value);
     return bubble;
+}
+
+function showLoadingIndicator() {
+    document.getElementById('loading-indicator').style.display = 'block';
+}
+
+function hideLoadingIndicator() {
+    document.getElementById('loading-indicator').style.display = 'none';
 }
