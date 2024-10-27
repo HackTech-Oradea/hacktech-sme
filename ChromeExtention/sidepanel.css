@@ -10,7 +10,13 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 16px;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 80px);
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 
   .synchronize {
