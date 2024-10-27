@@ -16,23 +16,7 @@
   .header {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .synchronize {
-    align-self: flex-end;
-    margin-bottom: 12px;
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 18px;
-    background-color: #e3f2fd;
-  }
-
-  .synchronize:hover {
-    background-color: #bbdefb;
+    justify-content: flex-end;
   }
 
   .delete {
@@ -54,15 +38,6 @@
   #delete:hover {
     color: red;
     cursor: pointer;
-  }
-
-  #login:hover {
-    color: blue;
-    cursor: pointer;
-  }
-
-  #login.hidden {
-    display: none;
   }
 
   .message-history-wrapper{
